@@ -1,0 +1,24 @@
+@page
+@{
+    ViewData["Title"] = "Response Submitted";
+}
+
+<div class="form-hero py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="card shadow-sm border-0 form-card">
+                    <div class="card-body p-5">
+                        <div class="success-icon mb-3" aria-hidden="true">✓</div>
+                        <h1 class="h4 mb-3">Your response was submitted. Many thanks.</h1>
+                        <p class="text-muted mb-4">
+                            CCWA has received your availability and placement information.
+                        </p>
+                        <a asp-page="/Index" class="btn btn-outline-primary me-2">Back to home</a>
+                        <a asp-page="/Form/Index" class="btn btn-outline-primary">Submit another response</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

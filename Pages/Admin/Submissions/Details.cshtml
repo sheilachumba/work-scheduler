@@ -1,0 +1,72 @@
+@page "{id:guid}"
+@model SupportWorkerPortal.Pages.Admin.Submissions.DetailsModel
+@{
+    ViewData["Title"] = "Submission Details";
+}
+
+<div class="container admin-page">
+
+    @if (TempData["StatusMessage"] is string message)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @message
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Submission details</h1>
+        <p class="text-muted mb-0">Submitted @Model.Submission.SubmittedAt.ToLocalTime().ToString("f")</p>
+    </div>
+    <a asp-page="Index" class="btn btn-outline-secondary">Back to list</a>
+</div>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white"><strong>Responses</strong></div>
+                <div class="card-body">
+                    @foreach (var item in Model.AnswerItems)
+                    {
+                        <div class="mb-4 pb-3 border-bottom">
+                            <div class="fw-semibold mb-1">@item.Label</div>
+                            @if (!string.IsNullOrWhiteSpace(item.FieldType))
+                            {
+                                <div class="small text-muted mb-2">@item.FieldType</div>
+                            }
+                            <div>@item.DisplayValue</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white"><strong>Admin review</strong></div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Input.Status" class="form-label"></label>
+                        <select asp-for="Input.Status" asp-items="Html.GetEnumSelectList<SupportWorkerPortal.Models.SubmissionStatus>()"
+                                class="form-select"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.AdminNotes" class="form-label"></label>
+                        <textarea asp-for="Input.AdminNotes" class="form-control" rows="6"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

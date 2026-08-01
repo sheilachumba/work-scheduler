@@ -1,0 +1,183 @@
+@page
+@model SupportWorkerPortal.Pages.Form.IndexModel
+@{
+    ViewData["Title"] = "Support Worker Availability & Placement Request";
+}
+
+<div class="form-hero py-4 py-md-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 form-card">
+                    <div class="card-body p-4 p-md-5">
+                        <h2 class="h5 mb-1">About you</h2>
+                        <p class="text-muted small mb-1">
+                            When you submit this form, your details will only be collected from the information you provide.
+                        </p>
+                        <p class="text-muted small mb-4"><span class="text-danger">*</span> Required</p>
+                        <p class="text-muted small mb-4">
+                            Your information is highly confidential and for internal use only within CCWA.
+                            All information will not be shared externally.
+                        </p>
+
+                        <form method="post" novalidate>
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                            @for (var i = 0; i < Model.Questions.Count; i++)
+                            {
+                                var question = Model.Questions[i];
+                                var fieldId = $"q_{question.Id:N}";
+                                var options = FormValidationService.ParseOptions(question.Options);
+                                var hasError = Model.FieldErrors.ContainsKey(question.Id);
+
+                                <div class="mb-4 @(hasError ? "has-validation-error" : "")">
+                                    <label class="form-label fw-semibold" for="@fieldId">
+                                        @(i + 1). @question.Label
+                                        @if (question.IsRequired)
+                                        {
+                                            <span class="text-danger" aria-hidden="true">*</span>
+                                        }
+                                    </label>
+
+                                    @if (!string.IsNullOrWhiteSpace(question.HelpText))
+                                    {
+                                        <div class="form-text mb-2" id="@(fieldId)_help">@question.HelpText</div>
+                                    }
+
+                                    @switch (question.FieldType)
+                                    {
+                                        case FieldType.Text:
+                                        case FieldType.Email:
+                                        case FieldType.Phone:
+                                        case FieldType.Number:
+                                            <input type="@GetInputType(question.FieldType)"
+                                                   class="form-control"
+                                                   id="@fieldId"
+                                                   name="Answers[@question.Id]"
+                                                   value="@Model.GetAnswer(question.Id)"
+                                                   placeholder="Enter your answer"
+                                                   aria-describedby="@(!string.IsNullOrWhiteSpace(question.HelpText) ? $"{fieldId}_help" : null)"
+                                                   @(question.IsRequired ? "required" : null) />
+                                            break;
+
+                                        case FieldType.TextArea:
+                                            <textarea class="form-control"
+                                                      id="@fieldId"
+                                                      name="Answers[@question.Id]"
+                                                      rows="4"
+                                                      placeholder="Enter your answer"
+                                                      aria-describedby="@(!string.IsNullOrWhiteSpace(question.HelpText) ? $"{fieldId}_help" : null)"
+                                                      @(question.IsRequired ? "required" : null)>@Model.GetAnswer(question.Id)</textarea>
+                                            break;
+
+                                        case FieldType.DatePicker:
+                                            <input type="date"
+                                                   class="form-control"
+                                                   id="@fieldId"
+                                                   name="Answers[@question.Id]"
+                                                   value="@Model.GetAnswer(question.Id)"
+                                                   @(question.IsRequired ? "required" : null) />
+                                            break;
+
+                                        case FieldType.Dropdown:
+                                            <select class="form-select"
+                                                    id="@fieldId"
+                                                    name="Answers[@question.Id]"
+                                                    @(question.IsRequired ? "required" : null)>
+                                                <option value="">Choose an option</option>
+                                                @foreach (var option in options)
+                                                {
+                                                    <option value="@option" selected="@(Model.GetAnswer(question.Id) == option)">@option</option>
+                                                }
+                                            </select>
+                                            break;
+
+                                        case FieldType.RadioButtons:
+                                            <fieldset class="mt-1" aria-describedby="@(!string.IsNullOrWhiteSpace(question.HelpText) ? $"{fieldId}_help" : null)">
+                                                @foreach (var option in options)
+                                                {
+                                                    var radioId = $"{fieldId}_{option.GetHashCode():X}";
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="radio"
+                                                               name="Answers[@question.Id]"
+                                                               id="@radioId"
+                                                               value="@option"
+                                                               checked="@(Model.GetAnswer(question.Id) == option)"
+                                                               @(question.IsRequired ? "required" : null) />
+                                                        <label class="form-check-label" for="@radioId">@option</label>
+                                                    </div>
+                                                }
+                                            </fieldset>
+                                            break;
+
+                                        case FieldType.MultiSelectCheckbox:
+                                            var selected = Model.GetMultiSelectAnswers(question.Id);
+                                            <fieldset class="mt-1" aria-describedby="@(!string.IsNullOrWhiteSpace(question.HelpText) ? $"{fieldId}_help" : null)">
+                                                @foreach (var option in options)
+                                                {
+                                                    var checkId = $"{fieldId}_{option.GetHashCode():X}";
+                                                    <div class="form-check">
+                                                        <input class="form-check-input multi-select"
+                                                               type="checkbox"
+                                                               id="@checkId"
+                                                               data-question-id="@question.Id"
+                                                               value="@option"
+                                                               checked="@selected.Contains(option)" />
+                                                        <label class="form-check-label" for="@checkId">@option</label>
+                                                    </div>
+                                                }
+                                                <input type="hidden"
+                                                       id="@fieldId"
+                                                       name="Answers[@question.Id]"
+                                                       value="@Model.GetAnswer(question.Id)" />
+                                            </fieldset>
+                                            break;
+                                    }
+
+                                    @if (hasError)
+                                    {
+                                        <div class="invalid-feedback d-block">@Model.FieldErrors[question.Id]</div>
+                                    }
+                                </div>
+                            }
+
+                            <div class="d-flex gap-2 pt-2">
+                                <button type="submit" class="btn btn-primary px-4">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function syncMultiSelect(questionId) {
+            const selected = [...document.querySelectorAll(`.multi-select[data-question-id="${questionId}"]:checked`)]
+                .map(el => el.value);
+            const hidden = document.querySelector(`input[type="hidden"][name="Answers[${questionId}]"]`);
+            if (hidden) {
+                hidden.value = selected.length ? JSON.stringify(selected) : '';
+            }
+        }
+
+        document.querySelectorAll('.multi-select').forEach(cb => {
+            cb.addEventListener('change', () => syncMultiSelect(cb.dataset.questionId));
+            syncMultiSelect(cb.dataset.questionId);
+        });
+    </script>
+}
+
+@functions {
+    private static string GetInputType(FieldType fieldType) => fieldType switch
+    {
+        FieldType.Email => "email",
+        FieldType.Phone => "tel",
+        FieldType.Number => "number",
+        _ => "text"
+    };
+}

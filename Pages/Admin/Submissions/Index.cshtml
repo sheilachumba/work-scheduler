@@ -1,0 +1,117 @@
+@page
+@model SupportWorkerPortal.Pages.Admin.Submissions.IndexModel
+@{
+    ViewData["Title"] = "Submissions";
+}
+
+<div class="container admin-page">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Submissions</h1>
+        <p class="text-muted mb-0">Review and manage support worker responses.</p>
+    </div>
+    <a asp-page-handler="Export"
+       asp-route-status="@Model.Filter.Status"
+       asp-route-from="@Model.Filter.From?.ToString("yyyy-MM-dd")"
+       asp-route-to="@Model.Filter.To?.ToString("yyyy-MM-dd")"
+       asp-route-search="@Model.Filter.Search"
+       class="btn btn-outline-primary">Export CSV</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card summary-card shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small">Total submissions</div>
+                <div class="display-6">@Model.TotalCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card summary-card shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small">Pending</div>
+                <div class="display-6 text-warning">@Model.PendingCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card summary-card shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small">Approved</div>
+                <div class="display-6 text-success">@Model.ApprovedCount</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label" for="status">Status</label>
+                <select asp-for="Filter.Status" asp-items="Model.StatusOptions" class="form-select" id="status">
+                    <option value="">All statuses</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="from">From</label>
+                <input asp-for="Filter.From" type="date" class="form-control" id="from" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="to">To</label>
+                <input asp-for="Filter.To" type="date" class="form-control" id="to" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="search">Search answers</label>
+                <input asp-for="Filter.Search" class="form-control" id="search" placeholder="Search text..." />
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Apply filters</button>
+                <a asp-page="Index" class="btn btn-link">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                    <th>Preview</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Submissions.Count == 0)
+                {
+                    <tr>
+                        <td colspan="4" class="text-muted text-center py-4">No submissions found.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var submission in Model.Submissions)
+                    {
+                        <tr>
+                            <td>@submission.SubmittedAt.ToLocalTime().ToString("g")</td>
+                            <td><span class="badge @Model.StatusBadgeClass(submission.Status)">@submission.Status</span></td>
+                            <td class="text-truncate" style="max-width: 320px;">
+                                @(submission.PreviewText ?? "—")
+                            </td>
+                            <td class="text-end">
+                                <a asp-page="Details" asp-route-id="@submission.Id" class="btn btn-sm btn-outline-primary">View</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>

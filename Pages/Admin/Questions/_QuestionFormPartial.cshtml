@@ -1,0 +1,48 @@
+@model SupportWorkerPortal.ViewModels.QuestionEditViewModel
+
+<form method="post" id="question-form">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="mb-3">
+                <label asp-for="Label" class="form-label"></label>
+                <input asp-for="Label" class="form-control preview-trigger" />
+                <span asp-validation-for="Label" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FieldType" class="form-label"></label>
+                <select asp-for="FieldType" asp-items="Html.GetEnumSelectList<SupportWorkerPortal.Models.FieldType>()"
+                        class="form-select preview-trigger" id="field-type"></select>
+            </div>
+
+            <div class="mb-3" id="options-group">
+                <label asp-for="OptionsText" class="form-label"></label>
+                <textarea asp-for="OptionsText" class="form-control preview-trigger" rows="6"
+                          placeholder="One option per line"></textarea>
+                <div class="form-text">Used for Dropdown, Multi-select checkbox, and Radio button questions.</div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="HelpText" class="form-label"></label>
+                <textarea asp-for="HelpText" class="form-control preview-trigger" rows="2"></textarea>
+            </div>
+
+            <div class="form-check mb-2">
+                <input asp-for="IsRequired" class="form-check-input preview-trigger" />
+                <label asp-for="IsRequired" class="form-check-label"></label>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="IsActive" class="form-check-input preview-trigger" />
+                <label asp-for="IsActive" class="form-check-label"></label>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-page="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,28 @@
+@page "{id:guid}"
+@model SupportWorkerPortal.Pages.Admin.Questions.EditModel
+@{
+    ViewData["Title"] = "Edit Question";
+}
+
+<div class="container admin-page">
+<h1 class="h3 mb-4">Edit question</h1>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <partial name="_QuestionFormPartial" model="Model.Input" />
+    </div>
+    <div class="col-lg-5">
+        <div class="card shadow-sm sticky-top preview-panel">
+            <div class="card-header bg-white"><strong>Preview</strong></div>
+            <div class="card-body">
+                <partial name="_FormPreviewPartial" model="Model.PreviewQuestions" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_QuestionFormScriptsPartial" />
+}
+</div>

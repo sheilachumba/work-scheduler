@@ -1,0 +1,14 @@
+<script>
+    const fieldTypeSelect = document.getElementById('field-type');
+    const optionsGroup = document.getElementById('options-group');
+
+    function toggleOptionsVisibility() {
+        if (!fieldTypeSelect || !optionsGroup) return;
+        const value = fieldTypeSelect.value;
+        const needsOptions = ['Dropdown', 'MultiSelectCheckbox', 'RadioButtons'].includes(value);
+        optionsGroup.style.display = needsOptions ? 'block' : 'none';
+    }
+
+    fieldTypeSelect?.addEventListener('change', toggleOptionsVisibility);
+    toggleOptionsVisibility();
+</script>

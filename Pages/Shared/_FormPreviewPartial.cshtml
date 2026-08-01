@@ -1,0 +1,74 @@
+@model IList<SupportWorkerPortal.Models.FormQuestion>
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted mb-0">No active questions to preview.</p>
+}
+else
+{
+    <div class="preview-form">
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            var question = Model[i];
+            var fieldId = $"preview_{question.Id:N}";
+            var options = SupportWorkerPortal.Services.FormValidationService.ParseOptions(question.Options);
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold" for="@fieldId">
+                    @(i + 1). @question.Label
+                    @if (question.IsRequired)
+                    {
+                        <span class="text-danger">*</span>
+                    }
+                </label>
+                @if (!string.IsNullOrWhiteSpace(question.HelpText))
+                {
+                    <div class="form-text">@question.HelpText</div>
+                }
+
+                @switch (question.FieldType)
+                {
+                    case SupportWorkerPortal.Models.FieldType.Text:
+                    case SupportWorkerPortal.Models.FieldType.Email:
+                    case SupportWorkerPortal.Models.FieldType.Phone:
+                    case SupportWorkerPortal.Models.FieldType.Number:
+                        <input type="text" class="form-control form-control-sm" id="@fieldId" disabled placeholder="Enter your answer" />
+                        break;
+                    case SupportWorkerPortal.Models.FieldType.TextArea:
+                        <textarea class="form-control form-control-sm" id="@fieldId" rows="3" disabled placeholder="Enter your answer"></textarea>
+                        break;
+                    case SupportWorkerPortal.Models.FieldType.DatePicker:
+                        <input type="date" class="form-control form-control-sm" id="@fieldId" disabled />
+                        break;
+                    case SupportWorkerPortal.Models.FieldType.Dropdown:
+                        <select class="form-select form-select-sm" id="@fieldId" disabled>
+                            <option>Choose an option</option>
+                            @foreach (var option in options)
+                            {
+                                <option>@option</option>
+                            }
+                        </select>
+                        break;
+                    case SupportWorkerPortal.Models.FieldType.RadioButtons:
+                        @foreach (var option in options)
+                        {
+                            <div class="form-check form-check-sm">
+                                <input class="form-check-input" type="radio" disabled />
+                                <label class="form-check-label">@option</label>
+                            </div>
+                        }
+                        break;
+                    case SupportWorkerPortal.Models.FieldType.MultiSelectCheckbox:
+                        @foreach (var option in options)
+                        {
+                            <div class="form-check form-check-sm">
+                                <input class="form-check-input" type="checkbox" disabled />
+                                <label class="form-check-label">@option</label>
+                            </div>
+                        }
+                        break;
+                }
+            </div>
+        }
+    </div>
+}

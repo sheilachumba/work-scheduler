@@ -1,0 +1,31 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Support Worker Availability & Placement Request";
+}
+
+<section class="landing-hero" aria-labelledby="landing-title">
+    <div class="landing-overlay"></div>
+    <div class="container h-100">
+        <div class="row h-100 align-items-center justify-content-end">
+            <div class="col-lg-5 col-md-7">
+                <div class="landing-card shadow-lg">
+                    <h1 id="landing-title" class="landing-title">
+                        Support Worker Availability, University and Placement Request
+                    </h1>
+                    <p class="landing-date text-muted">@Model.PublishedDate</p>
+                    <p class="landing-description">
+                        The purpose of this survey is to gather more quality data on your availability to work,
+                        your current study details including any future placement requirements that will help with rostering.
+                    </p>
+                    <p class="landing-note text-muted small">
+                        Your information is highly confidential and for internal use only within CCWA.
+                    </p>
+                    <a asp-page="/Form/Index" class="btn btn-dark btn-lg landing-start-btn">
+                        Start now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

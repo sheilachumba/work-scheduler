@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using SupportWorkerPortal.Data;
 using SupportWorkerPortal.Services;
 
@@ -9,8 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
+// Render/production: set ConnectionStrings__DefaultConnection in environment variables.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    ?? throw new InvalidOperationException(
+        "Connection string 'DefaultConnection' not found. Set ConnectionStrings__DefaultConnection.");
 
 var serverVersion = ServerVersion.Parse("8.0.36-mysql");
 

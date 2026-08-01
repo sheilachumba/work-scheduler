@@ -6,7 +6,7 @@ ASP.NET Core web application for CCWA support workers to submit availability, un
 
 - ASP.NET Core 10 (Razor Pages + Identity)
 - Entity Framework Core (code-first migrations)
-- SQL Server (LocalDB for local development)
+- MySQL / MariaDB with Entity Framework Core (code-first migrations)
 - Bootstrap 5
 
 > **Note:** This machine uses .NET 10 SDK. The project targets `net10.0`. For ASP.NET Core 8 specifically, install the .NET 8 SDK and change `<TargetFramework>net8.0</TargetFramework>` in `SupportWorkerPortal.csproj`.
@@ -14,7 +14,7 @@ ASP.NET Core web application for CCWA support workers to submit availability, un
 ## Prerequisites
 
 1. [.NET SDK](https://dotnet.microsoft.com/download) (10.x or 8.x depending on target framework)
-2. [SQL Server LocalDB](https://learn.microsoft.com/sql/database-engine/configure-windows/sql-server-express-localdb) (included with Visual Studio) or SQL Server Express
+2. MySQL or MariaDB (local: XAMPP/WAMP/phpMyAdmin, or cloud for production)
 3. EF Core CLI tools:
 
 ```bash
@@ -29,13 +29,23 @@ dotnet tool install --global dotnet-ef
 
    | Key | Value |
    |-----|-------|
-   | `ConnectionStrings__DefaultConnection` | Your SQL Server connection string (e.g. Azure SQL) |
+   | `ConnectionStrings__DefaultConnection` | `Server=HOST;Port=3306;Database=scheduler;User=USER;Password=PASS;` |
    | `AdminUser__Email` | Staging admin email |
    | `AdminUser__Password` | Staging admin password |
 
 4. Deploy — Render assigns a public URL like `https://work-scheduler.onrender.com`.
 
-> **Database:** Render does not host SQL Server. Use **Azure SQL**, **Railway SQL Server**, or another external SQL Server and paste the connection string above.
+> **Database:** `localhost` only works on your PC. On Render, create a **Render MySQL** database (or use PlanetScale/Railway) and paste its **external** connection string into the env var above.
+
+### Local MySQL (phpMyAdmin)
+
+Default connection in `appsettings.json`:
+
+```json
+"DefaultConnection": "Server=localhost;Port=3306;Database=scheduler;User=root;Password=YOUR_PASSWORD;"
+```
+
+Create an empty database named `scheduler` in phpMyAdmin. Tables are created automatically on first run via EF Core migrations.
 
 ## Open in Visual Studio
 
@@ -51,15 +61,15 @@ Visual Studio will apply EF Core migrations and seed data automatically on first
 
 ### 1. Configure connection string
 
-Default LocalDB connection in `appsettings.json`:
+Default local connection in `appsettings.json`:
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=SupportWorkerPortal;Trusted_Connection=True;MultipleActiveResultSets=true"
+  "DefaultConnection": "Server=localhost;Port=3306;Database=scheduler;User=root;Password=YOUR_PASSWORD;"
 }
 ```
 
-Update this if using a different SQL Server instance.
+Update the password if yours differs. On Render, override via the `ConnectionStrings__DefaultConnection` environment variable.
 
 ### 2. Configure admin user
 

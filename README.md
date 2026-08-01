@@ -21,6 +21,22 @@ ASP.NET Core web application for CCWA support workers to submit availability, un
 dotnet tool install --global dotnet-ef
 ```
 
+## Deploy to Render (Docker)
+
+1. Create a **Web Service** on [Render](https://render.com) and connect this repo.
+2. Set **Environment** to **Docker** (Render will use the root `Dockerfile`).
+3. Add environment variables in the Render dashboard:
+
+   | Key | Value |
+   |-----|-------|
+   | `ConnectionStrings__DefaultConnection` | Your SQL Server connection string (e.g. Azure SQL) |
+   | `AdminUser__Email` | Staging admin email |
+   | `AdminUser__Password` | Staging admin password |
+
+4. Deploy — Render assigns a public URL like `https://work-scheduler.onrender.com`.
+
+> **Database:** Render does not host SQL Server. Use **Azure SQL**, **Railway SQL Server**, or another external SQL Server and paste the connection string above.
+
 ## Open in Visual Studio
 
 1. Open **`SupportWorkerPortal.sln`** in Visual Studio 2022 (17.10+ recommended for .NET 10).
